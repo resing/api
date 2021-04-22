@@ -19,6 +19,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups" = "cheese_listing:read"},
  *     denormalizationContext={"groups"={"cheese_listing:write"}},
  *     shortName="cheeses",
+ *     attributes={
+ *          "formats"={"jsonld", "json", "html","csv"={"text/csv"}}
+ *     }
  * )
  * @ApiFilter(BooleanFilter::class, properties={"isPublished"})
  * @ApiFilter(SearchFilter::class, properties={"title": "partial"})
