@@ -2,8 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CheeseListingRepository;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -14,8 +18,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     itemOperations={"get","put", "delete"},
  *     normalizationContext={"groups" = "cheese_listing:read"},
  *     denormalizationContext={"groups"={"cheese_listing:write"}},
- *     shortName="cheeses"
+ *     shortName="cheeses",
  * )
+ * @ApiFilter(BooleanFilter::class, properties={"isPublished"})
+ * @ApiFilter(SearchFilter::class, properties={"title": "partial"})
+ * @ApiFilter(PropertyFilter::class)
  * @ORM\Entity(repositoryClass=CheeseListingRepository::class)
  */
 class CheeseListing
@@ -55,8 +62,9 @@ class CheeseListing
      */
     private $createdAt;
 
-    public function __construct()
+    public function __construct(string $title = null)
     {
+        $this->title = $title;
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -68,13 +76,6 @@ class CheeseListing
     public function getTitle(): ?string
     {
         return $this->title;
-    }
-
-    public function setTitle(string $title): self
-    {
-        $this->title = $title;
-
-        return $this;
     }
 
     public function getDescription(): ?string
