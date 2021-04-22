@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     itemOperations={"get","put", "delete"},
  *     normalizationContext={"groups" = "cheese_listing:read"},
  *     denormalizationContext={"groups"={"cheese_listing:write"}},
- *     shortName="cheeses",
+ *     shortName="Cheeses",
  *     attributes={
  *          "formats"={"jsonld", "json", "html","csv"={"text/csv"}}
  *     }
