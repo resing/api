@@ -11,6 +11,7 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -45,19 +46,19 @@ class CheeseListing
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"cheese_listing:read", "cheese_listing:write", "user:read"})
+     * @Groups({"cheese_listing:read", "cheese_listing:write", "user:read", "user:write"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"cheese_listing:read","cheese_listing:write"})
+     * @Groups({"cheese_listing:read","cheese_listing:write",  "user:write"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"cheese_listing:read", "cheese_listing:write", "user:read"})
+     * @Groups({"cheese_listing:read", "cheese_listing:write", "user:read", "user:write"})
      */
     private $price;
 
@@ -75,6 +76,7 @@ class CheeseListing
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="cheeseListings")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"cheese_listing:read","cheese_listing:write"})
+     * @Assert\Valid()
      */
     private $owner;
 

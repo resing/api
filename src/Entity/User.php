@@ -52,14 +52,14 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"user:read", "user:write", "cheese_listing:item:get"})
+     * @Groups({"user:read", "user:write", "cheese_listing:item:get", "cheese_listing:write"})
      * @Assert\NotBlank()
      */
     private $username;
 
     /**
-     * @ORM\OneToMany(targetEntity=CheeseListing::class, mappedBy="owner")
-     * @Groups({"user:read"})
+     * @ORM\OneToMany(targetEntity=CheeseListing::class, mappedBy="owner", cascade={"persist"})
+     * @Groups({"user:read", "user:write"})
      */
     private $cheeseListings;
 
