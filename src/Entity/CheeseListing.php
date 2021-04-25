@@ -20,12 +20,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      "post" = {"access_control" = "is_granted('ROLE_USER')"}
  * },
  *     itemOperations={
- *          "get"={
- *              "normalization_context"={"groups"={"cheese_listing:read", "cheese_listing:item:get"}},
+ *          "get",
+ *          "put"={
+ *              "access_control"="is_granted('EDIT', previous_object)",
+ *              "access_control_message"="Only the creator can edit a cheese listing"
  *          },
- *          "put" =  {"access_control" = "is_granted('ROLE_USER')"},
- *          "delete" = {"access_control" = "is_granted('ROLE_ADMIN')"}
- *      },
+ *          "delete"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *     },
  *     normalizationContext={"groups" = "cheese_listing:read"},
  *     denormalizationContext={"groups"={"cheese_listing:write"}},
  *     shortName="Cheeses",
