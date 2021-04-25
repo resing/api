@@ -78,6 +78,11 @@
         }
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.30"
+        "hautelook/alice-bundle": "^2.9",
+        "symfony/browser-kit": "5.2.*",
+        "symfony/css-selector": "^5.2",
+        "symfony/http-client": "5.2.*",
+        "symfony/maker-bundle": "^1.30",
+        "symfony/phpunit-bridge": "^5.2"
     }
 }
