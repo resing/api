@@ -19,11 +19,15 @@ class UserDataPersister implements DataPersisterInterface
         $this->entityManager = $entityManager;
         $this->userPasswordEncoder = $userPasswordEncoder;
     }
+
     public function supports($data): bool
     {
         return $data instanceof User;
     }
 
+    /**
+     * @param User $data
+     */
     public function persist($data)
     {
         if ($data->getPlainPassword()) {
