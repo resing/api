@@ -38,3 +38,6 @@ services:
         decorates: 'api_platform.metadata.resource.metadata_factory'
         arguments: [ '@App\ResourceMetadataFactory\AutoGroupResourceMetadataFactory.inner' ]
         decoration_priority: -20
+
+    App\Doctrine\CheeseListingSetOwnerListener:
+        tags: [doctrine.orm.entity_listener]
