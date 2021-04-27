@@ -19,17 +19,15 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *     collectionOperations={
  *          "get",
  *          "post"={
- *              "access_control"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
+ *              "security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
  *              "validation_groups"={"Default", "create"}
  *          },
  *     },
  *     itemOperations={
  *          "get",
- *          "put"={"access_control"="is_granted('ROLE_USER') and object == user"},
- *          "delete"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *          "put"={"security"="is_granted('ROLE_USER') and object == user"},
+ *          "delete"={"security"="is_granted('ROLE_ADMIN')"}
  *     },
- *     normalizationContext={"groups"={"user:read"}},
- *     denormalizationContext={"groups"={"user:write"}},
  * )
  * @UniqueEntity(fields={"username"})
  * @UniqueEntity(fields={"email"})
@@ -66,7 +64,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"user:read", "user:write", "cheese_listing:item:get", "cheese_listing:write"})
+     * @Groups({"user:read", "user:write", "cheese:item:get", "cheese:write"})
      * @Assert\NotBlank()
      */
     private $username;
@@ -86,7 +84,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
-     * @Groups({"admin:read", "user:write"})
+     * @Groups({"admin:read", "owner:read" ,"user:write"})
      */
     private $phoneNumber;
 

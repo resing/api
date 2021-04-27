@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     collectionOperations={
  *     "get",
- *      "post" = {"access_control" = "is_granted('ROLE_USER')"}
+ *      "post" = {"security" = "is_granted('ROLE_USER')"}
  * },
  *     itemOperations={
  *          "get",
@@ -25,11 +25,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "access_control"="is_granted('EDIT', previous_object)",
  *              "access_control_message"="Only the creator can edit a cheese listing"
  *          },
- *          "delete"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *          "delete"={"security"="is_granted('ROLE_ADMIN')"}
  *     },
- *     normalizationContext={"groups" = "cheese_listing:read"},
- *     denormalizationContext={"groups"={"cheese_listing:write"}},
- *     shortName="Cheeses",
+ *     shortName="cheese",
  *     attributes={
  *          "formats"={"jsonld", "json", "html","csv"={"text/csv"}}
  *     }
@@ -50,19 +48,19 @@ class CheeseListing
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"cheese_listing:read", "cheese_listing:write", "user:read", "user:write"})
+     * @Groups({"cheese:read", "cheese:write", "user:read", "user:write"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"cheese_listing:read","cheese_listing:write",  "user:write"})
+     * @Groups({"cheese:read","cheese:write",  "user:write"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"cheese_listing:read", "cheese_listing:write", "user:read", "user:write"})
+     * @Groups({"cheese:read", "cheese:write", "user:read", "user:write"})
      */
     private $price;
 
@@ -79,7 +77,7 @@ class CheeseListing
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="cheeseListings")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"cheese_listing:read","cheese_listing:write"})
+     * @Groups({"cheese:read","cheese:write"})
      * @Assert\Valid()
      */
     private $owner;
@@ -143,7 +141,7 @@ class CheeseListing
     /**
      * How long ago in text that this cheese listing was added.
      *
-     * @Groups("cheese_listing:read")
+     * @Groups("cheese:read")
      */
     public function getCreatedAtAgo(): string
     {

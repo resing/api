@@ -33,3 +33,8 @@ services:
     App\Serializer\AdminGroupsContextBuilder:
         decorates: 'api_platform.serializer.context_builder'
         arguments: [ '@App\Serializer\AdminGroupsContextBuilder.inner' ]
+
+    App\ResourceMetadataFactory\AutoGroupResourceMetadataFactory:
+        decorates: 'api_platform.metadata.resource.metadata_factory'
+        arguments: [ '@App\ResourceMetadataFactory\AutoGroupResourceMetadataFactory.inner' ]
+        decoration_priority: -20
