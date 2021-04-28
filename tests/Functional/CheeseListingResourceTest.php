@@ -115,7 +115,7 @@ class CheeseListingResourceTest extends CustomApiTestCase
     public function testGetCheeseListingItem()
     {
         $client = self::createClient();
-        $user = $this->createUser('cheeseplese@example.com', 'foo');
+        $user = $this->createUserAndLogIn($client, 'cheeseplese@example.com', 'foo');
 
         $cheeseListing1 = new CheeseListing('cheese1');
         $cheeseListing1->setOwner($user);
@@ -130,5 +130,9 @@ class CheeseListingResourceTest extends CustomApiTestCase
         $client->request('GET', '/api/cheeses/'.$cheeseListing1->getId());
 
         $this->assertResponseStatusCodeSame(404);
+        $data = $client->request('GET', '/api/users/'.$user->getId())->toArray();
+
+        $this->assertEmpty($data['cheeseListings']);
+
     }
 }
