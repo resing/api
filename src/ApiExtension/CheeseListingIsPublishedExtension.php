@@ -49,12 +49,25 @@ class CheeseListingIsPublishedExtension implements QueryCollectionExtensionInter
         if ($resourceClass !== CheeseListing::class) {
             return;
         }
-        if($this->security->isGranted('ROLE_ADMIN')) {
+
+        if ($this->security->isGranted('ROLE_ADMIN')) {
             return;
         }
+
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder
-            ->andWhere(sprintf('%s.isPublished = :isPublished', $rootAlias))
-            ->setParameter('isPublished', true);
+
+        if (!$this->security->getUser()) {
+            $queryBuilder->andWhere(sprintf('%s.isPublished = :isPublished', $rootAlias))
+                ->setParameter('isPublished', true);
+        } else {
+
+            $queryBuilder->andWhere(sprintf('
+                    %s.isPublished = :isPublished
+                    OR %s.owner = :owner',
+                $rootAlias, $rootAlias
+            ))
+                ->setParameter('isPublished', true)
+                ->setParameter('owner', $this->security->getUser());
+        }
     }
 }

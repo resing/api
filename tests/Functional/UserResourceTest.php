@@ -10,7 +10,6 @@ use Hautelook\AliceBundle\PhpUnit\ReloadDatabaseTrait;
 
 class UserResourceTest extends CustomApiTestCase
 {
-    use ReloadDatabaseTrait;
 
     public function testCreateUser()
     {

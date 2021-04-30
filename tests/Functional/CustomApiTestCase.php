@@ -7,7 +7,9 @@ namespace App\Tests\Functional;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
 use App\Entity\User;
+use App\Factory\UserFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use Zenstruck\Foundry\Proxy;
 
 
 class CustomApiTestCase extends ApiTestCase
@@ -29,9 +31,21 @@ class CustomApiTestCase extends ApiTestCase
         return $user;
     }
 
-    protected function logIn(Client $client, string $email, string $password)
+    protected function logIn(Client $client, $userOrEmail, string $password = UserFactory::DEFAULT_PASSWORD)
     {
-        $client->request('POST', '/login', [
+        if ($userOrEmail instanceof User || $userOrEmail instanceof Proxy) {
+            $email = $userOrEmail->getEmail();
+        } elseif (is_string($userOrEmail)) {
+            $email = $userOrEmail;
+        } else {
+            throw new \InvalidArgumentException(sprintf(
+                'Argument 2 to "%s" should be a User, Foundry Proxy or string email, "%s" given',
+                __METHOD__,
+                is_object($userOrEmail) ? get_class($userOrEmail) : gettype($userOrEmail)
+            ));
+        }
+
+        $statusCode = $client->request('POST', '/login', [
             'json' => [
                 'email' => $email,
                 'password' => $password

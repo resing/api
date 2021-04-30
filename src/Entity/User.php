@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\UserRepository;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,8 +15,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
- * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
+ *     security="is_granted('ROLE_USER')",
+ *     normalizationContext={"groups"={"user:read"}},
+ *     denormalizationContext={"groups"={"user:write"}},
  *     collectionOperations={
  *          "get",
  *          "post"={
@@ -27,10 +30,12 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *          "get",
  *          "put"={"security"="is_granted('ROLE_USER') and object == user"},
  *          "delete"={"security"="is_granted('ROLE_ADMIN')"}
- *     },
+ *     }
  * )
+ * @ApiFilter(PropertyFilter::class)
  * @UniqueEntity(fields={"username"})
  * @UniqueEntity(fields={"email"})
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface
 {
