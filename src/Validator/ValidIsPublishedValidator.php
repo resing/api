@@ -40,7 +40,6 @@ class ValidIsPublishedValidator extends ConstraintValidator
 
         if ($value->getIsPublished()) {
             // we are publishing!
-
             // don't allow short descriptions, unless you are an admin
             if (strlen($value->getDescription()) < 100 && !$this->security->isGranted('ROLE_ADMIN')) {
                 $this->context->buildViolation('Cannot publish: description is too short!')

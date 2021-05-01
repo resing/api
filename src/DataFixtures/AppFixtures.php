@@ -24,6 +24,7 @@ class AppFixtures extends Fixture
         $user = UserFactory::new()->create([
             'email' => 'cheesefan@example.com',
             'username' => 'cheesefan',
+            'roles' => ['ROLE_ADMIN'],
             'password' => $this->passwordEncoder->encodePassword(new User(), 'cheese'),
         ]);
         UserFactory::new()::createMany(50);

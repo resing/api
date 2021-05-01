@@ -3,19 +3,25 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Action\NotFoundAction;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Filter\DailyStatsDateFilter;
 
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"dailystats:read"}},
+ *     denormalizationContext={"groups"={"dailystats:write"}},
+ *     paginationItemsPerPage=7,
  *     itemOperations={
- *         "get"
+ *         "get",
+ *         "put",
  *     },
  *     collectionOperations={"get"}
  * )
+ * @ApiFilter(DailyStatsDateFilter::class, arguments={"throwOnInvalid"=true})
  */
 class DailyStats
 {
@@ -26,7 +32,7 @@ class DailyStats
     public $date;
 
     /**
-     * @Groups({"dailystats:read"})
+     * @Groups({"dailystats:read", "dailystats:write"})
      */
     public $totalVisitors;
 

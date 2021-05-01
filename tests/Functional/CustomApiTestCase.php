@@ -10,10 +10,15 @@ use App\Entity\User;
 use App\Factory\UserFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 
 class CustomApiTestCase extends ApiTestCase
 {
+    use Factories;
+    use ResetDatabase;
+
     protected function createUser(string $email, string $password): User
     {
         $user = new User();
