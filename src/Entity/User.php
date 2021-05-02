@@ -9,6 +9,8 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -46,8 +48,17 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ApiProperty(identifier=false)
      */
     private $id;
+
+    /**
+     * @ORM\Column(type="uuid", unique=true)
+     * @ApiProperty(identifier=true)
+     * @Groups({"user:write"})
+     * @SerializedName("id")
+     */
+    private $uuid;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
@@ -109,9 +120,10 @@ class User implements UserInterface
      */
     private $isMvp = false;
 
-    public function __construct()
+    public function __construct(UuidInterface $uuid = null)
     {
         $this->cheeseListings = new ArrayCollection();
+        $this->uuid = $uuid ?: Uuid::uuid4();
     }
 
     public function getId(): ?int
@@ -293,5 +305,12 @@ class User implements UserInterface
         $this->isMvp = $isMvp;
     }
 
+    /**
+     * @return \Ramsey\Uuid\UuidInterface
+     */
+    public function getUuid(): UuidInterface
+    {
+        return $this->uuid;
+    }
 
 }

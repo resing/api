@@ -8,6 +8,7 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use Hautelook\AliceBundle\PhpUnit\ReloadDatabaseTrait;
+use Ramsey\Uuid\Uuid;
 
 class UserResourceTest extends CustomApiTestCase
 {
@@ -24,28 +25,53 @@ class UserResourceTest extends CustomApiTestCase
         ]);
         $this->assertResponseStatusCodeSame(201);
 
+        $user = UserFactory::repository()->findOneBy(['email' => 'cheeseplease@example.com']);
+        $this->assertNotNull($user);
+        $this->assertJsonContains([
+            '@id' => '/api/users/'.$user->getUuid()->toString()
+        ]);
+
         $this->logIn($client, 'cheeseplease@example.com', 'brie');
     }
 
     public function testUpdateUser()
     {
         $client = self::createClient();
-        $user = $this->createUserAndLogIn($client, 'cheeseplease@example.com', 'foo');
-        $client->request('PUT', '/api/users/' . $user->getId(), [
+        $user = UserFactory::new()->create();
+        $this->logIn($client, $user);
+
+        $client->request('PUT', '/api/users/'.$user->getUuid(), [
             'json' => [
                 'username' => 'newusername',
-                'roles' => ['ROLE_ADMIN']
+                'roles' => ['ROLE_ADMIN'] // will be ignored
             ]
         ]);
-
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             'username' => 'newusername'
         ]);
 
-        $em = $this->getEntityManager();
-        $user = $em->getRepository(User::class)->find($user->getId());
+        $user->refresh();
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
+    }
+
+    public function testCreateUserWithUuid()
+    {
+        $client = self::createClient();
+        $uuid = Uuid::uuid4();
+        $client->request('POST', '/api/users', [
+            'json' => [
+                'id' => $uuid,
+                'email' => 'cheeseplease@example.com',
+                'username' => 'cheeseplease',
+                'password' => 'brie'
+            ],
+            'headers' => ['Content-type' => 'application/ld+json']
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $this->assertJsonContains([
+            '@id' => '/api/users/'.$uuid
+        ]);
     }
 
     public function testGetUser()
@@ -59,7 +85,7 @@ class UserResourceTest extends CustomApiTestCase
         $this->logIn($client, $authenticatedUser);
 
         $data = $client
-            ->request('GET', '/api/users/' . $user->getId())
+            ->request('GET', '/api/users/' . $user->getUuid())
             ->toArray();
         $this->assertResponseStatusCodeSame(200);
         $this->assertJsonContains([
@@ -78,7 +104,7 @@ class UserResourceTest extends CustomApiTestCase
         $user->save();
         $this->logIn($client, $user);
 
-        $client->request('GET', '/api/users/' . $user->getId());
+        $client->request('GET', '/api/users/' . $user->getUuid());
         $this->assertJsonContains([
             'phoneNumber' => '555.123.4567',
             'isMe' => true,
